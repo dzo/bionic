@@ -27,15 +27,8 @@
 
 enum kgsl_deviceid {
  KGSL_DEVICE_YAMATO = 0x00000000,
- KGSL_DEVICE_2D0 = 0x00000001,
- KGSL_DEVICE_2D1 = 0x00000002,
- KGSL_DEVICE_MAX = 0x00000003
-};
-
-enum kgsl_user_mem_type {
- KGSL_USER_MEM_TYPE_PMEM = 0x00000000,
- KGSL_USER_MEM_TYPE_ASHMEM = 0x00000001,
- KGSL_USER_MEM_TYPE_ADDR = 0x00000002
+ KGSL_DEVICE_G12 = 0x00000001,
+ KGSL_DEVICE_MAX = 0x00000002
 };
 
 struct kgsl_devinfo {
@@ -115,8 +108,8 @@ struct kgsl_device_waittimestamp {
 
 struct kgsl_ringbuffer_issueibcmds {
  unsigned int drawctxt_id;
- unsigned int ibdesc_addr;
- unsigned int numibs;
+ unsigned int ibaddr;
+ unsigned int sizedwords;
  unsigned int timestamp;
  unsigned int flags;
 };
@@ -150,18 +143,6 @@ struct kgsl_drawctxt_destroy {
 };
 
 #define IOCTL_KGSL_DRAWCTXT_DESTROY   _IOW(KGSL_IOC_TYPE, 0x14, struct kgsl_drawctxt_destroy)
-
-struct kgsl_map_user_mem {
- int fd;
- unsigned int gpuaddr;
- unsigned int len;
- unsigned int offset;
- unsigned int hostptr;
- enum kgsl_user_mem_type memtype;
- unsigned int reserved;
-};
-
-#define IOCTL_KGSL_MAP_USER_MEM   _IOWR(KGSL_IOC_TYPE, 0x15, struct kgsl_map_user_mem)
 
 struct kgsl_sharedmem_from_pmem {
  int pmem_fd;
@@ -210,7 +191,7 @@ struct kgsl_sharedmem_from_vmalloc {
  unsigned int gpuaddr;
  unsigned int hostptr;
 
- unsigned int flags;
+ int force_no_low_watermark;
 };
 
 #define IOCTL_KGSL_SHAREDMEM_FROM_VMALLOC   _IOWR(KGSL_IOC_TYPE, 0x23, struct kgsl_sharedmem_from_vmalloc)
