@@ -26,9 +26,8 @@
 #define KGSL_FLAGS_RESERVED2 0x00000080
 
 enum kgsl_deviceid {
- KGSL_DEVICE_ANY = 0x00000000,
- KGSL_DEVICE_YAMATO = 0x00000001,
- KGSL_DEVICE_G12 = 0x00000002,
+ KGSL_DEVICE_YAMATO = 0x00000000,
+ KGSL_DEVICE_G12 = 0x00000001,
  KGSL_DEVICE_MAX = 0x00000002
 };
 
@@ -49,10 +48,6 @@ struct kgsl_devmemstore {
  unsigned int sbz;
  volatile unsigned int eoptimestamp;
  unsigned int sbz2;
- volatile unsigned int ts_cmp_enable;
- unsigned int sbz3;
- volatile unsigned int ref_wait_ts;
- unsigned int sbz4;
 };
 
 #define KGSL_DEVICE_MEMSTORE_OFFSET(field)   offsetof(struct kgsl_devmemstore, field)
@@ -69,14 +64,22 @@ enum kgsl_property_type {
  KGSL_PROP_DEVICE_POWER = 0x00000003,
  KGSL_PROP_SHMEM = 0x00000004,
  KGSL_PROP_SHMEM_APERTURES = 0x00000005,
- KGSL_PROP_MMU_ENABLE = 0x00000006,
- KGSL_PROP_INTERRUPT_WAITS = 0x00000007,
+ KGSL_PROP_MMU_ENABLE = 0x00000006
 };
 
 struct kgsl_shadowprop {
  unsigned int gpuaddr;
  unsigned int size;
  unsigned int flags;
+};
+
+struct kgsl_platform_data {
+ unsigned int high_axi_2d;
+ unsigned int high_axi_3d;
+ unsigned int max_grp2d_freq;
+ int (*set_grp2d_async)(void);
+ unsigned int max_grp3d_freq;
+ int (*set_grp3d_async)(void);
 };
 
 #define KGSL_IOC_TYPE 0x09
@@ -202,5 +205,21 @@ struct kgsl_drawctxt_set_bin_base_offset {
 
 #define IOCTL_KGSL_DRAWCTXT_SET_BIN_BASE_OFFSET   _IOW(KGSL_IOC_TYPE, 0x25, struct kgsl_drawctxt_set_bin_base_offset)
 
-#endif
+enum kgsl_cmdwindow_type {
+ KGSL_CMDWINDOW_MIN = 0x00000000,
+ KGSL_CMDWINDOW_2D = 0x00000000,
+ KGSL_CMDWINDOW_3D = 0x00000001,
+ KGSL_CMDWINDOW_MMU = 0x00000002,
+ KGSL_CMDWINDOW_ARBITER = 0x000000FF,
+ KGSL_CMDWINDOW_MAX = 0x000000FF,
+};
 
+struct kgsl_cmdwindow_write {
+ enum kgsl_cmdwindow_type target;
+ unsigned int addr;
+ unsigned int data;
+};
+
+#define IOCTL_KGSL_CMDWINDOW_WRITE   _IOW(KGSL_IOC_TYPE, 0x2e, struct kgsl_cmdwindow_write)
+
+#endif

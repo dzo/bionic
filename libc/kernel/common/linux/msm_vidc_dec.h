@@ -427,10 +427,10 @@ struct vdec_input_frameinfo {
 };
 
 struct vdec_framesize {
- uint32_t left;
- uint32_t top;
- uint32_t right;
- uint32_t bottom;
+ uint32_t n_left;
+ uint32_t n_top;
+ uint32_t n_right;
+ uint32_t n_bottom;
 };
 
 struct vdec_output_frameinfo {
