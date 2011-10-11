@@ -4599,6 +4599,9 @@ size_t dlmalloc_usable_size(void* mem) {
       return usable_size;
     }
   }
+#if !FOOTERS
+#undef fm
+#endif /* FOOTERS */
   return 0;
 }
 
