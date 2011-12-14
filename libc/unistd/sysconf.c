@@ -367,11 +367,11 @@ __get_nproc_conf(void)
     const char*  p;
     int          count = 0;
 
-    if (line_parser_init(parser, "/proc/cpuinfo") < 0)
+    if (line_parser_init(parser, "/sys/devices/system/cpu/present") < 0)
         return 1;
 
     while ((p = line_parser_gets(parser))) {
-        if ( !memcmp(p, "processor", 9) )
+        if ( sscanf(p, "0-%d", &count) == 1 )
             count += 1;
     }
     return (count < 1) ? 1 : count;
@@ -385,11 +385,11 @@ __get_nproc_onln(void)
     const char*  p;
     int          count = 0;
 
-    if (line_parser_init(parser, "/proc/stat") < 0)
+    if (line_parser_init(parser, "/sys/devices/system/cpu/present") < 0)
         return 1;
 
     while ((p = line_parser_gets(parser))) {
-        if ( !memcmp(p, "cpu", 3) && isdigit(p[3]) )
+        if ( sscanf(p, "0-%d", &count) == 1 )
             count += 1;
     }
     return (count < 1) ? 1 : count;
