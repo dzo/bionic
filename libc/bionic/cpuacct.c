@@ -26,20 +26,20 @@
  * SUCH DAMAGE.
  */
 #include <unistd.h>
-#include <stdio.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 #include "cpuacct.h"
 
 int cpuacct_add(uid_t uid)
 {
     int count;
-    FILE *fp;
+    int fd;
     char buf[80];
 
     count = snprintf(buf, sizeof(buf), "/acct/uid/%d/tasks", uid);
-    fp = fopen(buf, "w+");
-    if (!fp) {
+    fd = open(buf, O_RDWR|O_CREAT|O_TRUNC|O_SYNC);
+    if (fd < 0) {
         /* Note: sizeof("tasks") returns 6, which includes the NULL char */
         buf[count - sizeof("tasks")] = 0;
         if (mkdir(buf, 0775) < 0)
@@ -47,13 +47,13 @@ int cpuacct_add(uid_t uid)
 
         /* Note: sizeof("tasks") returns 6, which includes the NULL char */
         buf[count - sizeof("tasks")] = '/';
-        fp = fopen(buf, "w+");
+        fd = open(buf, O_RDWR|O_CREAT|O_TRUNC|O_SYNC);
     }
-    if (!fp)
+    if (fd < 0)
         return -errno;
 
-    fprintf(fp, "0");
-    if (fclose(fp))
+    write(fd, "0", 2);
+    if (close(fd))
         return -errno;
 
     return 0;
