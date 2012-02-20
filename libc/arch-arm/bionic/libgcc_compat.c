@@ -156,3 +156,8 @@ void  __bionic_libgcc_compat_hooks(void)
 COMPAT_FUNCTIONS_LIST
 #undef XX
 }
+
+unsigned __martn_uidiv(unsigned n, unsigned d) {
+  if (d==0) return 0;
+    else return n/d;
+}
